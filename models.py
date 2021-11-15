@@ -42,4 +42,18 @@ def get_xception_based_model() -> nn.Module:
     classification head stated in the exercise.
     """
     """INSERT YOUR CODE HERE, overrun return."""
-    return SimpleNet()
+    custom_network = build_xception_backbone()
+
+    base_params = sum(p.numel() for p in custom_network.parameters() if p.requires_grad)
+    custom_network.fc = nn.Sequential(
+     nn.Linear(2048,1000),
+     nn.ReLU(), 
+     nn.Linear(1000,256),
+     nn.ReLU(), 
+     nn.Linear(256,64),
+     nn.ReLU(), 
+     nn.Linear(64,2),
+    )
+    s_params = sum(p.numel() for p in custom_network.parameters() if p.requires_grad)
+    params_diff = s_params - base_params
+    return custom_network
